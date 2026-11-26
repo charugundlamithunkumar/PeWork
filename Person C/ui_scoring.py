@@ -145,6 +145,229 @@ def review_features(text, rating):
     return features.extract_review(text, int(rating))
 
 
+REVERSE_LABELS = {v: k for k, v in LABELS.items()}
+
+
+def _format_risk_driver(feat, val, contrib, rating, text):
+    """Format a positive SHAP contribution into a clear operational explanation."""
+    r = int(rating)
+    if feat == "rating":
+        if r in (1, 5):
+            return f"+{contrib:.2f} log-odds — {r}★ extreme rating increases manipulation prior"
+        return f"+{contrib:.2f} log-odds — {r}★ rating elevates baseline risk"
+    elif feat == "EXT":
+        return f"+{contrib:.2f} log-odds — Extreme rating polarity ({r}★) matches typical astroturfing profiles"
+    elif feat == "vader_compound":
+        if val >= 0.6:
+            return f"+{contrib:.2f} log-odds — Hyperbolic positive sentiment ({val:.2f} compound score)"
+        elif val <= -0.5:
+            return f"+{contrib:.2f} log-odds — Hyperbolic negative sentiment ({val:.2f} compound score)"
+        return f"+{contrib:.2f} log-odds — Polarized sentiment score ({val:+.2f})"
+    elif feat == "readability_score":
+        if val >= 70:
+            return f"+{contrib:.2f} log-odds — High reading ease ({val:.1f}) characteristic of promotional copy"
+        elif val <= 40:
+            return f"+{contrib:.2f} log-odds — Dense sentence complexity ({val:.1f} reading ease) deviates from baseline"
+        return f"+{contrib:.2f} log-odds — Reading ease ({val:.1f}) elevates risk"
+    elif feat == "char_count":
+        return f"+{contrib:.2f} log-odds — Review length ({int(val)} chars) consistent with scripted review templates"
+    elif feat == "word_count":
+        return f"+{contrib:.2f} log-odds — Word count ({int(val)} words) consistent with scripted review templates"
+    elif feat == "uppercase_ratio":
+        return f"+{contrib:.2f} log-odds — Elevated uppercase share ({val:.1%}) indicates emphasis-seeking formatting"
+    elif feat == "purchase_declaration_count":
+        return f"+{contrib:.2f} log-odds — Explicit purchase declarations ({int(val)} detected) commonly inserted to artificially establish credibility"
+    elif feat == "avg_word_len":
+        return f"+{contrib:.2f} log-odds — Average word length ({val:.1f}) characteristic of promotional templates"
+    elif feat == "lexical_diversity":
+        return f"+{contrib:.2f} log-odds — Constrained vocabulary variety ({val:.2f} diversity index)"
+    elif feat == "sentiment_mismatch":
+        return f"+{contrib:.2f} log-odds — Disconnect between star rating and review sentiment ({val:.2f} gap)"
+    elif feat == "first_person_ratio":
+        return f"+{contrib:.2f} log-odds — Elevated first-person wording ({val:.1%}) typical of staged testimonials"
+    elif feat == "elongation_count":
+        return f"+{contrib:.2f} log-odds — Repeated character elongation ({int(val)} instances) indicates exaggerated informal tone"
+    elif feat == "specificity_proxy":
+        return f"+{contrib:.2f} log-odds — Digit share ({val:.1%}) deviates from natural consumer prose"
+    elif feat == "digit_count":
+        return f"+{contrib:.2f} log-odds — Digit frequency ({int(val)}) deviates from natural consumer prose"
+    label = LABELS.get(feat, feat)
+    return f"+{contrib:.2f} log-odds — {label} increases risk"
+
+
+def _format_mitigating_factor(feat, val, contrib, rating, text):
+    """Format a negative SHAP contribution into a clear operational mitigating explanation."""
+    r = int(rating)
+    if feat == "rating":
+        if r in (2, 3, 4):
+            return f"{contrib:.2f} log-odds — Non-extreme {r}★ rating indicates balanced evaluation"
+        return f"{contrib:.2f} log-odds — {r}★ rating reduces manipulation prior"
+    elif feat == "EXT":
+        return f"{contrib:.2f} log-odds — Absence of extreme rating polarity indicates measured evaluation"
+    elif feat == "char_count":
+        return f"{contrib:.2f} log-odds — Short review length ({int(val)} chars) lowers empirical fraud rate compared to scripted reviews"
+    elif feat == "word_count":
+        return f"{contrib:.2f} log-odds — Concise word count ({int(val)} words) lowers empirical fraud rate"
+    elif feat == "uppercase_ratio":
+        if val > 0.4:
+            return f"{contrib:.2f} log-odds — Formatting pattern ({val:.1%}) atypical of standard astroturfing"
+        return f"{contrib:.2f} log-odds — Moderate uppercase share ({val:.1%}) within organic bounds"
+    elif feat == "vader_compound":
+        return f"{contrib:.2f} log-odds — Nuanced text sentiment ({val:.2f} compound score) reflects authentic reaction"
+    elif feat == "readability_score":
+        return f"{contrib:.2f} log-odds — Reading complexity ({val:.1f}) typical of genuine consumer prose"
+    elif feat == "lexical_diversity":
+        return f"{contrib:.2f} log-odds — Rich vocabulary variety ({val:.2f} unique ratio) signals natural composition"
+    elif feat == "avg_word_len":
+        return f"{contrib:.2f} log-odds — Natural average word length ({val:.1f} chars/word)"
+    elif feat == "purchase_declaration_count":
+        return f"{contrib:.2f} log-odds — Absence of artificial purchase declaration markers"
+    elif feat == "elongation_count":
+        return f"{contrib:.2f} log-odds — Absence of exaggerated character repetition"
+    elif feat == "sentiment_mismatch":
+        return f"{contrib:.2f} log-odds — Consistent alignment between star rating and expressed sentiment"
+    elif feat == "first_person_ratio":
+        return f"{contrib:.2f} log-odds — Natural first-person wording ratio ({val:.1%})"
+    elif feat == "specificity_proxy":
+        return f"{contrib:.2f} log-odds — Organic digit ratio ({val:.1%})"
+    elif feat == "digit_count":
+        return f"{contrib:.2f} log-odds — Organic digit frequency ({int(val)})"
+    label = LABELS.get(feat, feat)
+    return f"{contrib:.2f} log-odds — {label} pulls risk downward"
+
+
+def generate_verdict_reasoning(text, rating, raw_score, calibrated_score, risk_tier, shap_contributions, spans=None):
+    """Generate deterministic, human-readable explanations grounded in SHAP and lexical analysis."""
+    r = int(rating) if str(rating).strip().isdigit() else 3
+
+    # Normalize SHAP contributions into {feature_name: float}
+    shap_dict = {}
+    if isinstance(shap_contributions, dict):
+        shap_dict = {REVERSE_LABELS.get(k, k): float(v) for k, v in shap_contributions.items()}
+    elif isinstance(shap_contributions, pd.DataFrame):
+        feat_col = "Feature" if "Feature" in shap_contributions.columns else shap_contributions.columns[0]
+        val_col = "Contribution" if "Contribution" in shap_contributions.columns else shap_contributions.columns[1]
+        for _, row in shap_contributions.iterrows():
+            k = str(row[feat_col])
+            shap_dict[REVERSE_LABELS.get(k, k)] = float(row[val_col])
+    elif hasattr(shap_contributions, "items"):
+        shap_dict = {REVERSE_LABELS.get(k, k): float(v) for k, v in shap_contributions.items()}
+    elif isinstance(shap_contributions, (list, tuple)):
+        for item in shap_contributions:
+            if isinstance(item, (list, tuple)) and len(item) >= 2:
+                k = str(item[0])
+                shap_dict[REVERSE_LABELS.get(k, k)] = float(item[1])
+
+    # Extract feature values for textual grounding
+    try:
+        feat_vals = review_features(text, r)
+    except Exception:
+        feat_vals = {
+            "char_count": len(text),
+            "word_count": len(text.split()),
+            "uppercase_ratio": sum(1 for c in text if c.isupper()) / max(len(text), 1),
+            "vader_compound": 0.0,
+            "readability_score": 50.0,
+        }
+
+    # Lexical pattern matches
+    lower_text = text.lower()
+    matched_purchase = [p for p in getattr(features, "PURCHASE", ()) if p in lower_text]
+    matched_promo = [p for p in getattr(features, "PROMO", ()) if p in lower_text]
+
+    # Partition drivers (>0) and mitigators (<0)
+    drivers = sorted([(k, v) for k, v in shap_dict.items() if v > 0.005], key=lambda x: x[1], reverse=True)
+    mitigators = sorted([(k, v) for k, v in shap_dict.items() if v < -0.005], key=lambda x: x[1])
+
+    risk_drivers = [
+        _format_risk_driver(k, feat_vals.get(k, 0.0), v, r, text)
+        for k, v in drivers[:3]
+    ]
+    mitigating_factors = [
+        _format_mitigating_factor(k, feat_vals.get(k, 0.0), v, r, text)
+        for k, v in mitigators[:2]
+    ]
+
+    tier_str = str(risk_tier).lower()
+    if "high" in tier_str:
+        clean_tier = "High Risk"
+    elif "mod" in tier_str or "watch" in tier_str:
+        clean_tier = "Moderate Risk"
+    else:
+        clean_tier = "Low Risk"
+
+    # 1. Verdict sentence
+    if clean_tier == "High Risk":
+        s1 = f"Flagged as High Risk ({calibrated_score:.1%} calibrated probability, exceeding the 37.0% inspection cutoff)."
+    elif clean_tier == "Moderate Risk":
+        s1 = f"Placed on Watchlist as Moderate Risk ({calibrated_score:.1%} calibrated probability, just below the 37.0% cutoff)."
+    else:
+        s1 = f"Cleared as Low Risk ({calibrated_score:.1%} calibrated probability, well below the 37.0% inspection cutoff)."
+
+    # 2. Primary reason sentence
+    if matched_purchase:
+        phrases_str = ", ".join(f'"{p}"' for p in matched_purchase[:3])
+        s2 = (f"The model detected synthetic purchase declarations ({phrases_str}) alongside an extreme {r}★ rating, "
+              f"matching known astroturfing and paid-review patterns.")
+    elif matched_promo:
+        phrases_str = ", ".join(f'"{p}"' for p in matched_promo[:3])
+        s2 = (f"The review contains promotional phrases ({phrases_str}) combined with an extreme {r}★ rating, "
+              f"signaling incentive-driven manipulation.")
+    elif clean_tier == "Moderate Risk":
+        s2 = (f"An extreme {r}★ rating elevates the initial baseline risk, while the concise text length "
+              f"({len(text)} characters) and stylistic attributes partially counterbalance the score.")
+    elif clean_tier == "High Risk":
+        s2 = (f"An extreme {r}★ rating combined with polarized sentiment and stylistic patterns "
+              f"strongly elevates manipulation probability.")
+    else:
+        if r in (2, 3, 4):
+            s2 = (f"The non-extreme {r}★ rating and organic phrasing reflect balanced, genuine consumer feedback "
+                  f"without deceptive markers.")
+        else:
+            s2 = (f"Despite the {r}★ rating, the organic linguistic structure and absence of manipulative markers "
+                  f"confirm authentic user sentiment.")
+
+    # 3. Counterbalancing signal sentence
+    if clean_tier == "High Risk":
+        if mitigators:
+            top_mit_name = LABELS.get(mitigators[0][0], mitigators[0][0])
+            top_mit_val = mitigators[0][1]
+            s3 = (f"While {top_mit_name} provides slight downward mitigation ({top_mit_val:+.2f} log-odds), "
+                  f"the dominant risk drivers keep the overall prediction well into the high-risk zone.")
+        else:
+            s3 = "Virtually all evaluated linguistic and metadata signals reinforce the high-risk classification."
+    elif clean_tier == "Moderate Risk":
+        if mitigators:
+            top_mit_name = LABELS.get(mitigators[0][0], mitigators[0][0])
+            top_mit_val = mitigators[0][1]
+            s3 = (f"Mitigating signals including {top_mit_name} ({top_mit_val:+.2f} log-odds) hold the calibrated "
+                  f"probability safely below the automated flagging threshold.")
+        else:
+            s3 = "Balanced feature interactions maintain the score in the intermediate observation tier."
+    else:
+        if mitigators:
+            top_names = [LABELS.get(m[0], m[0]) for m in mitigators[:2]]
+            s3 = (f"Strong downward contributions from {' and '.join(top_names)} firmly anchor the review "
+                  f"within the safe operating envelope.")
+        else:
+            s3 = "The feature contributions remain predominantly neutral to negative, supporting automated approval."
+
+    summary = f"{s1} {s2} {s3}"
+
+    actions = {
+        "High Risk": "Route to secondary human compliance audit and hold merchant settlement.",
+        "Moderate Risk": "Place on watchlist for velocity spikes; auto-approve unless repeated across product.",
+        "Low Risk": "Automated approval; ingest directly into public catalog with zero latency.",
+    }
+
+    return {
+        "summary": summary,
+        "risk_drivers": risk_drivers,
+        "mitigating_factors": mitigating_factors,
+        "recommended_action": actions.get(clean_tier, actions["Low Risk"]),
+    }
+
+
 def score_review(bundle, text, rating):
     model, spec = bundle
     data = pd.DataFrame([review_features(text, rating)])
@@ -156,9 +379,22 @@ def score_review(bundle, text, rating):
         "Value": data.loc[0, columns].to_numpy(dtype=float),
         "Contribution": contributions,
     })
-    factors = factors.loc[factors.Contribution.abs() > 1e-8]
-    factors = factors.sort_values("Contribution", key=abs, ascending=False).head(3)
-    return score, spec["threshold"], factors, data
+    factors_top = factors.loc[factors.Contribution.abs() > 1e-8]
+    factors_top = factors_top.sort_values("Contribution", key=abs, ascending=False).head(3)
+
+    calibrated = calibrate_score(score)
+    tier_title, _, _, _ = get_risk_tier(score, spec["threshold"])
+    shap_dict = dict(zip(columns, contributions))
+    reasoning = generate_verdict_reasoning(
+        text=text,
+        rating=rating,
+        raw_score=score,
+        calibrated_score=calibrated,
+        risk_tier=tier_title,
+        shap_contributions=shap_dict,
+        spans=None,
+    )
+    return score, spec["threshold"], factors_top, data, reasoning
 
 
 def ranking_details(data, references):

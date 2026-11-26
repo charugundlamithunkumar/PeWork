@@ -11,7 +11,7 @@ from xgboost.core import XGBoostError
 
 from ui_scoring import (
     ASSETS, HERE, MAX_ROWS, MAX_TEXT,
-    analyze_text_spans, calibrate_score, get_risk_tier,
+    analyze_text_spans, calibrate_score, generate_verdict_reasoning, get_risk_tier,
     load_model, ranking_details, score_csv, score_review, what_if_ratings
 )
 
@@ -109,7 +109,19 @@ def show_review():
                     icon=":material/info:")
             return
 
-        score, threshold, factors, data = result
+        if len(result) >= 5:
+            score, threshold, factors, data, reasoning = result[:5]
+        else:
+            score, threshold, factors, data = result[:4]
+            reasoning = generate_verdict_reasoning(
+                text=text,
+                rating=rating,
+                raw_score=score,
+                calibrated_score=calibrate_score(score),
+                risk_tier=get_risk_tier(score, threshold)[0],
+                shap_contributions=factors,
+                spans=None,
+            )
         calibrated = calibrate_score(score)
         tier_title, tier_action, tier_color, tier_bg = get_risk_tier(score, threshold)
 
@@ -124,6 +136,37 @@ def show_review():
             f'</div>',
             unsafe_allow_html=True
         )
+
+        with st.container(border=True):
+            st.markdown("**Model Reasoning & Verdict Explanation**")
+            st.markdown(
+                f'<div style="background-color:{tier_bg}; border-left: 4px solid {tier_color}; '
+                f'color:#1F2937; padding:10px 14px; border-radius:4px; font-size:0.9rem; line-height:1.55; margin-bottom:12px;">'
+                f'{reasoning["summary"]}'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+            col_drivers, col_mitigate = st.columns(2, gap="medium")
+            with col_drivers:
+                st.markdown("<span style='font-size:0.82rem; font-weight:600; color:#991B1B;'>Factors Increasing Risk</span>", unsafe_allow_html=True)
+                if reasoning.get("risk_drivers"):
+                    for item in reasoning["risk_drivers"]:
+                        st.markdown(f"<div style='font-size:0.82rem; line-height:1.45; margin-top:4px; color:#7F1D1D;'>• {item}</div>", unsafe_allow_html=True)
+                else:
+                    st.caption("No factors pushed risk upward.")
+            with col_mitigate:
+                st.markdown("<span style='font-size:0.82rem; font-weight:600; color:#065F46;'>Factors Reducing Risk</span>", unsafe_allow_html=True)
+                if reasoning.get("mitigating_factors"):
+                    for item in reasoning["mitigating_factors"]:
+                        st.markdown(f"<div style='font-size:0.82rem; line-height:1.45; margin-top:4px; color:#064E3B;'>• {item}</div>", unsafe_allow_html=True)
+                else:
+                    st.caption("No mitigating factors detected.")
+            st.markdown(
+                f'<div style="margin-top:10px; padding-top:8px; border-top:1px solid #E5E7EB; font-size:0.82rem; color:#4B5563;">'
+                f'<strong>Recommended Action:</strong> {reasoning["recommended_action"]}'
+                f'</div>',
+                unsafe_allow_html=True
+            )
 
         st.markdown("**Top score contributors**")
         if factors.empty:
