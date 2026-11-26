@@ -5,6 +5,10 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.67-FF4B4B.svg)](https://streamlit.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+> 📄 **Academic Report:** [`docs/PeWork_Final_Report.md`](docs/PeWork_Final_Report.md) ([Printable HTML](docs/PeWork_Final_Report.html))  
+> 🎬 **Faculty Demo Script:** [`demo/DEMO_SCRIPT.md`](demo/DEMO_SCRIPT.md) ([Sample CSV](demo/sample_reviews.csv))  
+> 📊 **Audit Artifacts:** [`Person C/audit_artifacts/`](Person%20C/audit_artifacts/)
+
 **PeWork** is a machine learning pipeline and interactive web application designed to screen and detect fraudulent, manipulated, or incentivized product reviews. The system trains gradient-boosted decision trees (XGBoost) on Amazon e-commerce product reviews and evaluates their generalization and transferability across platforms to Yelp restaurant reviews.
 
 ---
@@ -135,3 +139,10 @@ The models were evaluated across six frozen test cohorts:
   * `ui_scoring.py`: Scoring utilities, SHAP explanations, calibration, and batch processor.
   * `ui_assets/`: Pre-bundled model weights, manifests, and MCDM ranking references.
   * `transfer_results.csv`: Complete metrics across 36 model/cohort evaluations.
+  * `audit_artifacts/`: Standardized confusion matrices and feature sensitivity tables.
+* [`docs/`](docs/PeWork_Final_Report.md)
+  * [`PeWork_Final_Report.md`](docs/PeWork_Final_Report.md) · [Print-ready HTML](docs/PeWork_Final_Report.html): Complete formal academic evaluation report.
+* [`demo/`](demo/DEMO_SCRIPT.md)
+  * [`DEMO_SCRIPT.md`](demo/DEMO_SCRIPT.md): 5-minute structured faculty walkthrough script.
+  * [`sample_reviews.csv`](demo/sample_reviews.csv): 10 tested benchmark reviews hitting all three risk tiers.
+

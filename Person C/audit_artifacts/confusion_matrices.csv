@@ -1,0 +1,25 @@
+dataset,model_key,model_name,threshold_type,threshold,n,prevalence,tp,tn,fp,fn,precision,recall,f1,fpr,roc_auc,ap
+Amazon Holdout (All Products),earlier_history,Earlier Product History (Prospective),Calibrated (37.0%),0.37,74192,0.2017,10144,57512,1714,4822,0.8555,0.6778,0.7563,0.0289,0.8878,0.8218
+Amazon Holdout (All Products),earlier_history,Earlier Product History (Prospective),Default Frozen,0.4487,74192,0.2017,9972,57928,1298,4994,0.8848,0.6663,0.7602,0.0219,0.8878,0.8218
+Amazon Holdout (All Products),full_45_frozen,Week 1 GPU Baseline (45 Features),Calibrated (37.0%),0.37,74192,0.2017,10543,54389,4837,4423,0.6855,0.7045,0.6949,0.0817,0.8493,0.5477
+Amazon Holdout (All Products),full_45_frozen,Week 1 GPU Baseline (45 Features),Default Frozen,0.469,74192,0.2017,10337,54754,4472,4629,0.698,0.6907,0.6943,0.0755,0.8493,0.5477
+Amazon Holdout (All Products),no_family_32,Rating-Family Ablation (32 Features),Calibrated (37.0%),0.37,74192,0.2017,9756,53769,5457,5210,0.6413,0.6519,0.6465,0.0921,0.8263,0.4753
+Amazon Holdout (All Products),no_family_32,Rating-Family Ablation (32 Features),Default Frozen,0.3536,74192,0.2017,9808,53647,5579,5158,0.6374,0.6554,0.6463,0.0942,0.8263,0.4753
+Amazon Holdout (All Products),full_44_no_prod_review_count,44 Features (No Product Count),Calibrated (37.0%),0.37,74192,0.2017,10141,57800,1426,4825,0.8767,0.6776,0.7644,0.0241,0.8831,0.8187
+Amazon Holdout (All Products),full_44_no_prod_review_count,44 Features (No Product Count),Default Frozen,0.4679,74192,0.2017,9942,58225,1001,5024,0.9085,0.6643,0.7675,0.0169,0.8831,0.8187
+Amazon Holdout (All Products),no_family_31_no_prod_review_count,"31 Features (No Family, No Product Count)",Calibrated (37.0%),0.37,74192,0.2017,9309,57210,2016,5657,0.822,0.622,0.7082,0.034,0.8585,0.7609
+Amazon Holdout (All Products),no_family_31_no_prod_review_count,"31 Features (No Family, No Product Count)",Default Frozen,0.4071,74192,0.2017,9185,57423,1803,5781,0.8359,0.6137,0.7078,0.0304,0.8585,0.7609
+Amazon Holdout (All Products),rating_only_table,Rating-Only Reference,Calibrated (37.0%),0.37,74192,0.2017,10223,56520,2706,4743,0.7907,0.6831,0.733,0.0457,0.8272,0.629
+Amazon Holdout (All Products),rating_only_table,Rating-Only Reference,Default Frozen,0.8213,74192,0.2017,10223,56520,2706,4743,0.7907,0.6831,0.733,0.0457,0.8272,0.629
+Yelp Transfer (All Reviews),earlier_history,Earlier Product History (Prospective),Calibrated (37.0%),0.37,358957,0.1027,16524,201919,120178,20336,0.1209,0.4483,0.1904,0.3731,0.56,0.1216
+Yelp Transfer (All Reviews),earlier_history,Earlier Product History (Prospective),Default Frozen,0.4487,358957,0.1027,15542,209533,112564,21318,0.1213,0.4216,0.1884,0.3495,0.56,0.1216
+Yelp Transfer (All Reviews),full_45_frozen,Week 1 GPU Baseline (45 Features),Calibrated (37.0%),0.37,358957,0.1027,18183,178130,143967,18677,0.1121,0.4933,0.1827,0.447,0.5227,0.1139
+Yelp Transfer (All Reviews),full_45_frozen,Week 1 GPU Baseline (45 Features),Default Frozen,0.469,358957,0.1027,16974,188209,133888,19886,0.1125,0.4605,0.1808,0.4157,0.5227,0.1139
+Yelp Transfer (All Reviews),no_family_32,Rating-Family Ablation (32 Features),Calibrated (37.0%),0.37,358957,0.1027,11931,184989,137108,24929,0.0801,0.3237,0.1284,0.4257,0.4386,0.1155
+Yelp Transfer (All Reviews),no_family_32,Rating-Family Ablation (32 Features),Default Frozen,0.3536,358957,0.1027,12118,182440,139657,24742,0.0798,0.3288,0.1285,0.4336,0.4386,0.1155
+Yelp Transfer (All Reviews),full_44_no_prod_review_count,44 Features (No Product Count),Calibrated (37.0%),0.37,358957,0.1027,12365,222127,99970,24495,0.1101,0.3355,0.1658,0.3104,0.5111,0.1032
+Yelp Transfer (All Reviews),full_44_no_prod_review_count,44 Features (No Product Count),Default Frozen,0.4679,358957,0.1027,10362,236048,86049,26498,0.1075,0.2811,0.1555,0.2672,0.5111,0.1032
+Yelp Transfer (All Reviews),no_family_31_no_prod_review_count,"31 Features (No Family, No Product Count)",Calibrated (37.0%),0.37,358957,0.1027,4963,221296,100801,31897,0.0469,0.1346,0.0696,0.313,0.3516,0.073
+Yelp Transfer (All Reviews),no_family_31_no_prod_review_count,"31 Features (No Family, No Product Count)",Default Frozen,0.4071,358957,0.1027,4501,228147,93950,32359,0.0457,0.1221,0.0665,0.2917,0.3516,0.073
+Yelp Transfer (All Reviews),rating_only_table,Rating-Only Reference,Calibrated (37.0%),0.37,358957,0.1027,17004,197973,124124,19856,0.1205,0.4613,0.1911,0.3854,0.5601,0.1156
+Yelp Transfer (All Reviews),rating_only_table,Rating-Only Reference,Default Frozen,0.8213,358957,0.1027,17004,197973,124124,19856,0.1205,0.4613,0.1911,0.3854,0.5601,0.1156

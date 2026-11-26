@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PeWork: Final Project Report & Scientific Evaluation</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #eff6ff;
+      --secondary: #0f766e;
+      --dark: #0f172a;
+      --gray: #64748b;
+      --light-gray: #f8fafc;
+      --border: #e2e8f0;
+      --danger: #b91c1c;
+      --warning: #b45309;
+      --success: #15803d;
+    }
+    @page {
+      size: A4;
+      margin: 20mm;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--dark);
+      background-color: #f1f5f9;
+      margin: 0;
+      padding: 30px;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 48px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: var(--primary);
+      font-size: 2.2rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 12px;
+      margin-top: 0;
+    }
+    h2 {
+      color: var(--primary);
+      font-size: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      margin-top: 36px;
+    }
+    h3 {
+      color: var(--secondary);
+      font-size: 1.2rem;
+      margin-top: 24px;
+    }
+    .meta-bar {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      background: var(--light-gray);
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin-bottom: 24px;
+    }
+    .meta-bar strong {
+      color: var(--dark);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 0.88rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 9px 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #f8fafc;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge-success { background: #dcfce7; color: var(--success); }
+    .badge-warning { background: #fef3c7; color: var(--warning); }
+    .badge-danger { background: #fee2e2; color: var(--danger); }
+    .callout {
+      background: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      padding: 14px 18px;
+      border-radius: 4px;
+      margin: 18px 0;
+    }
+    code, pre {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    code {
+      padding: 2px 6px;
+      font-size: 0.88em;
+    }
+    pre {
+      padding: 12px 16px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+    }
+    .matrix-box {
+      display: flex;
+      gap: 20px;
+      margin: 18px 0;
+    }
+    .matrix-card {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px;
+      background: #fafafa;
+    }
+    .print-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .print-btn:hover { background: #1d4ed8; }
+    @media print {
+      body { background: white; padding: 0; }
+      .container { box-shadow: none; padding: 0; max-width: 100%; }
+      .print-btn { display: none; }
+      h2 { page-break-after: avoid; }
+      table, pre, .matrix-box { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">🖨️ Save as PDF / Print</button>
+
+<div class="container">
+  <h1>PeWork: Cross-Platform Review Screening & Fraud Detection</h1>
+  
+  <div class="meta-bar">
+    <div><strong>Course Evaluation:</strong> December 2026</div>
+    <div><strong>Repository:</strong> github.com/charugundlamithunkumar/PeWork</div>
+    <div><strong>Runtime:</strong> Python 3.12.4 | XGBoost 3.4.1 | Streamlit 1.67.0</div>
+  </div>
+
+  <div class="callout">
+    <strong>Executive Summary:</strong> PeWork investigates the detection of fraudulent product reviews using XGBoost models trained on Amazon data and evaluates cross-platform generalization to 358k Yelp restaurant reviews. We introduce strict causal point-in-time splits, empirical decile probability calibration, and a production Streamlit decision-support application with real-time text highlighting and what-if counterfactual sensitivity.
+  </div>
+
+  <h2>1. Team Breakdown & Pipeline Architecture</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Team Module</th>
+        <th>Engineering Scope</th>
+        <th>Core Deliverables & Contributions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Person A</strong></td>
+        <td>Amazon Model Development & Split Design</td>
+        <td>GPU XGBoost baseline, temporal history notebooks, product-disjoint 74,192 holdout split, baseline SHAP feature audit.</td>
+      </tr>
+      <tr>
+        <td><strong>Person B</strong></td>
+        <td>Label Audit & Rating Ablations</td>
+        <td>Deconstructed label pathways (removals vs. heuristics), rating-family hierarchy (Tiers 1 & 2), and discovery of the 3-Product Outlier Anomaly.</td>
+      </tr>
+      <tr>
+        <td><strong>Person C</strong></td>
+        <td>Cross-Platform Transfer & Production UI</td>
+        <td>36 cohort transfer evaluations (Amazon→Yelp), unified 87-run experiment log, Streamlit dashboard, calibration & batch triage.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>2. Dataset Cohorts & Class Characteristics</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Dataset Cohort</th>
+        <th>Review Count (N)</th>
+        <th>Ground Truth Positives</th>
+        <th>Prevalence</th>
+        <th>Role & Platform Definition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Amazon Development</strong></td>
+        <td>232,334</td>
+        <td>57,840</td>
+        <td>24.89%</td>
+        <td>5 grouped reviewer cross-validation folds.</td>
+      </tr>
+      <tr>
+        <td><strong>Amazon Holdout (All)</strong></td>
+        <td>74,192</td>
+        <td>14,966</td>
+        <td>20.17%</td>
+        <td>673 held-out products disjoint from development.</td>
+      </tr>
+      <tr>
+        <td><strong>Amazon Holdout (Clean / Minus 3)</strong></td>
+        <td>70,030</td>
+        <td>14,474</td>
+        <td>20.67%</td>
+        <td>Sensitivity check excluding 3 massive products.</td>
+      </tr>
+      <tr>
+        <td><strong>Amazon Holdout (New Reviewers)</strong></td>
+        <td>62,094</td>
+        <td>6,346</td>
+        <td>10.22%</td>
+        <td>Reviewers with zero presence in development set.</td>
+      </tr>
+      <tr>
+        <td><strong>Yelp (All Restaurant Reviews)</strong></td>
+        <td>358,957</td>
+        <td>36,860</td>
+        <td>10.27%</td>
+        <td>Cross-platform transfer target (Yelp recommendation filter).</td>
+      </tr>
+      <tr>
+        <td><strong>Yelp (Inflation Subset)</strong></td>
+        <td>349,833</td>
+        <td>27,736</td>
+        <td>7.93%</td>
+        <td>Filtered reviews with 4 or 5 stars vs recommended reviews.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3. Scientific Sensitivity & Feature Ablation Audit</h2>
+  <p>To eliminate subjective dropping of features, the table below documents the empirical metrics justifying each step of our feature architecture:</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Subset / Architecture</th>
+        <th>Feats</th>
+        <th>CV AP</th>
+        <th>Holdout AP (All)</th>
+        <th>Holdout AP (Clean)</th>
+        <th>Outlier Flags (of 4,162)</th>
+        <th>Mathematical & Scientific Justification</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Full Baseline (Week 1 GPU)</strong></td>
+        <td>45</td>
+        <td><strong>0.906</strong></td>
+        <td>0.548</td>
+        <td>0.837</td>
+        <td>4,162</td>
+        <td><strong>Severe Leakage Failure:</strong> Unclipped product count flags all 4,162 reviews on 3 outlier products, dropping AP by 0.289.</td>
+      </tr>
+      <tr>
+        <td><strong>Without Tier 1 Ratings</strong></td>
+        <td>38</td>
+        <td>0.871</td>
+        <td>0.485</td>
+        <td>0.799</td>
+        <td>4,162</td>
+        <td>Dropping review rating reduces clean holdout AP by only 0.038, proving text and behavioral features carry strong standalone signal.</td>
+      </tr>
+      <tr>
+        <td><strong>No Rating Family (32 Feats)</strong></td>
+        <td>32</td>
+        <td>0.860</td>
+        <td>0.475</td>
+        <td>0.785</td>
+        <td>4,162</td>
+        <td>Paired product bootstrap confirms only a -0.042 AP loss when discarding all rating dynamics (95% CI [-0.064, -0.022]).</td>
+      </tr>
+      <tr>
+        <td><strong>44 Feats (No Product Count)</strong></td>
+        <td>44</td>
+        <td>0.898</td>
+        <td><strong>0.819</strong></td>
+        <td>0.837</td>
+        <td>230</td>
+        <td><strong>Direct Outlier Cure:</strong> Omitting unclipped product count cuts false alarms from 4,162 to 230, lifting holdout AP from 0.548 to 0.819.</td>
+      </tr>
+      <tr>
+        <td><strong>31 Feats (Universal Subset)</strong></td>
+        <td>31</td>
+        <td>0.852</td>
+        <td>0.761</td>
+        <td>0.786</td>
+        <td>218</td>
+        <td><strong>Optimal Domain-Portable Architecture:</strong> Immune to rating bias and volume distortions while retaining 0.761 AP.</td>
+      </tr>
+      <tr>
+        <td><strong>Earlier Product History</strong></td>
+        <td>45</td>
+        <td><strong>0.914</strong></td>
+        <td><strong>0.822</strong></td>
+        <td><strong>0.841</strong></td>
+        <td>203</td>
+        <td><strong>Optimal Overall Model:</strong> Enforcing strict point-in-time causal ordering cures the 3-product anomaly without discarding features.</td>
+      </tr>
+      <tr>
+        <td><strong>Rating-Only Reference</strong></td>
+        <td>1</td>
+        <td>0.715</td>
+        <td>0.629</td>
+        <td>0.658</td>
+        <td>0</td>
+        <td>Minimal baseline showing star rating carries baseline signal on Amazon (0.629 AP) but fails on new reviewers (0.279 AP).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4. Standardized Confusion Matrices (Threshold = 37.0%)</h2>
+  <div class="matrix-box">
+    <div class="matrix-card">
+      <h3 style="margin-top:0;">Amazon Holdout (N = 74,192)</h3>
+      <p style="margin: 4px 0 10px 0; font-size:0.85rem; color:var(--gray);">Model: Earlier Product History | Prevalence: 20.2%</p>
+      <table>
+        <tr>
+          <th>Actual \ Predicted</th>
+          <th>Pred Negative (0)</th>
+          <th>Pred Positive (1)</th>
+        </tr>
+        <tr>
+          <td><strong>Negative (0)</strong></td>
+          <td><strong>57,512</strong> (TN)</td>
+          <td>1,714 (FP)</td>
+        </tr>
+        <tr>
+          <td><strong>Positive (1)</strong></td>
+          <td>4,822 (FN)</td>
+          <td><strong>10,144</strong> (TP)</td>
+        </tr>
+      </table>
+      <p style="font-size:0.85rem; margin-bottom:0;">
+        <strong>Precision:</strong> 85.5% &nbsp;|&nbsp; 
+        <strong>Recall:</strong> 67.8% &nbsp;|&nbsp; 
+        <strong>F1:</strong> 0.756 &nbsp;|&nbsp; 
+        <strong>FPR:</strong> 2.9% &nbsp;|&nbsp; 
+        <strong>ROC-AUC:</strong> 0.888
+      </p>
+    </div>
+    <div class="matrix-card">
+      <h3 style="margin-top:0;">Yelp Transfer (N = 358,957)</h3>
+      <p style="margin: 4px 0 10px 0; font-size:0.85rem; color:var(--gray);">Model: Earlier Product History | Prevalence: 10.3%</p>
+      <table>
+        <tr>
+          <th>Actual \ Predicted</th>
+          <th>Pred Negative (0)</th>
+          <th>Pred Positive (1)</th>
+        </tr>
+        <tr>
+          <td><strong>Negative (0)</strong></td>
+          <td><strong>201,919</strong> (TN)</td>
+          <td>120,178 (FP)</td>
+        </tr>
+        <tr>
+          <td><strong>Positive (1)</strong></td>
+          <td>20,336 (FN)</td>
+          <td><strong>16,524</strong> (TP)</td>
+        </tr>
+      </table>
+      <p style="font-size:0.85rem; margin-bottom:0;">
+        <strong>Precision:</strong> 12.1% &nbsp;|&nbsp; 
+        <strong>Recall:</strong> 44.8% &nbsp;|&nbsp; 
+        <strong>F1:</strong> 0.190 &nbsp;|&nbsp; 
+        <strong>FPR:</strong> 37.3% &nbsp;|&nbsp; 
+        <strong>ROC-AUC:</strong> 0.560
+      </p>
+    </div>
+  </div>
+
+  <h2>5. Empirical Decile Probability Calibration</h2>
+  <p>Person A's audit uncovered severe miscalibration in uncalibrated raw scores: in the top score decile (mean predicted probability 99.6%), the empirical fraud rate was only 55.8%. To resolve this for production triage, we mapped raw model outputs through holdout deciles using monotonic interpolation:</p>
+  <pre><code>RAW_CAL_POINTS = np.array([0.0, 0.015, 0.025, 0.033, 0.042, 0.053, 0.068, 0.095, 0.208, 0.875, 0.996, 1.0])
+OBS_CAL_POINTS = np.array([0.03, 0.0389, 0.0379, 0.0438, 0.0484, 0.0631, 0.0817, 0.1107, 0.1969, 0.8378, 0.5580, 0.60])
+
+def calibrate_score(raw_score):
+    return float(np.interp(np.clip(raw_score, 0.0, 1.0), RAW_CAL_POINTS, OBS_CAL_POINTS))</code></pre>
+
+  <h2>6. Cross-Platform Transfer Dynamics (Amazon vs Yelp)</h2>
+  <div class="callout">
+    <strong>Why Average Precision Drops from 0.822 to 0.122:</strong>
+    <ol>
+      <li><strong>Target Definition Discrepancy:</strong> Amazon ground truth captures seller manipulation rings and platform deletions. Yelp ground truth captures Yelp's recommendation filter, which flags unestablished accounts rather than solely malicious content.</li>
+      <li><strong>Absence of Cross-Platform User History:</strong> Top Amazon models rely on prior reviewer velocity (PR, NR). User identities do not link across platforms, forcing zero-history cold start predictions.</li>
+      <li><strong>Domain Shift:</strong> Consumer electronics and home goods emphasize packaging and build quality; restaurant reviews focus on hospitality, flavor, and wait times.</li>
+    </ol>
+  </div>
+
+  <h2>7. Production Streamlit Decision Support System</h2>
+  <ul>
+    <li><strong>Interactive Phrase Highlighter:</strong> Identifies and color-codes purchase declarations (red), promo keywords (amber), slang (purple), and character repetitions (blue) in real-time.</li>
+    <li><strong>3-Tier Triage Framework:</strong> Low Risk (&lt;20%, Automated Approval), Moderate Risk (20–37%, Watchlist), and High Risk (≥37%, Manual Inspection Required).</li>
+    <li><strong>What-If Star-Rating Simulator:</strong> Evaluates the same review across 1★ through 5★ with an Altair sensitivity bar chart and threshold cutoff line.</li>
+    <li><strong>CSV Batch Triage & Enriched Export:</strong> Processes up to 5,000 reviews and outputs an enriched CSV with Calibrated Risk, Risk Tier, and Top Driving SHAP Factors.</li>
+  </ul>
+
+  <h2>8. Phase 2 Research Roadmap (Jan–Feb 2027)</h2>
+  <ul>
+    <li><strong>Competitor-Agenda & Coordinated Smear Detection:</strong> Deploying bipartite graph neural networks (GNNs) to identify coordinated negative review bombing and cross-competitor smear rings.</li>
+    <li><strong>CNN Object-Level Image Reuse Detection:</strong> Deploying object-level feature extractors (YOLO/Faster-R-CNN) to detect cropped, mirrored, or watermarked product photos shared across fake accounts.</li>
+    <li><strong>VLM Cross-Modal Consistency Checks:</strong> Implementing vision-language models (CLIP/PaliGemma) to flag contradictions where review text describes features absent in the attached photo.</li>
+  </ul>
+</div>
+
+</body>
+</html>

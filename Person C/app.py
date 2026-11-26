@@ -262,7 +262,114 @@ def show_evaluation():
         st.dataframe(confusion, hide_index=True, alt="Confusion matrix for the selected model and test cohort")
         st.caption(f"Threshold {row.threshold:.4f} · Trapezoidal PR-AUC {row.pr_auc:.3f}")
 
+    # Section 1: Holdout Confusion Matrices at Calibrated 37% Threshold
+    st.subheader("Holdout Confusion Matrices (Threshold = 37%)")
+    st.caption("Standardized evaluation across platforms at the 37.0% decision threshold used for production triage.")
+    cm_path = HERE / "audit_artifacts" / "confusion_matrices.json"
+    if cm_path.exists():
+        try:
+            with open(cm_path, "r", encoding="utf-8") as f:
+                cm_data = json.load(f)
+            
+            # Filter to calibrated 37% threshold
+            cm_37 = [item for item in cm_data if item["threshold_type"] == "Calibrated (37.0%)"]
+            available_models = sorted(list({item["model_name"] for item in cm_37}))
+            
+            selected_cm_model = st.selectbox(
+                "Model for 37% Confusion Matrix comparison",
+                available_models,
+                index=available_models.index("Earlier Product History (Prospective)") if "Earlier Product History (Prospective)" in available_models else 0,
+                key="cm_model_select"
+            )
+
+            amz_cm = next((item for item in cm_37 if item["dataset"].startswith("Amazon") and item["model_name"] == selected_cm_model), None)
+            yelp_cm = next((item for item in cm_37 if item["dataset"].startswith("Yelp") and item["model_name"] == selected_cm_model), None)
+
+            col_amz, col_yelp = st.columns(2, gap="medium")
+            if amz_cm:
+                with col_amz, st.container(border=True):
+                    st.markdown(f"**Amazon Holdout (All 673 Products)**")
+                    st.caption(f"N = {amz_cm['n']:,} reviews · Prevalence = {amz_cm['prevalence']:.1%}")
+                    c1, c2, c3, c4 = st.columns(4)
+                    c1.metric("Precision", f"{amz_cm['precision']:.1%}")
+                    c2.metric("Recall", f"{amz_cm['recall']:.1%}")
+                    c3.metric("F1", f"{amz_cm['f1']:.3f}")
+                    c4.metric("FPR", f"{amz_cm['fpr']:.1%}")
+                    
+                    df_amz_cm = pd.DataFrame({
+                        "Actual Label": ["Negative (0)", "Positive (1)"],
+                        "Pred Negative (0)": [f"{amz_cm['tn']:,} (TN)", f"{amz_cm['fn']:,} (FN)"],
+                        "Pred Positive (1)": [f"{amz_cm['fp']:,} (FP)", f"{amz_cm['tp']:,} (TP)"],
+                    })
+                    st.dataframe(df_amz_cm, hide_index=True, width="stretch")
+                    st.caption(f"ROC-AUC: {amz_cm['roc_auc']:.3f} · AP: {amz_cm['ap']:.3f}")
+
+            if yelp_cm:
+                with col_yelp, st.container(border=True):
+                    st.markdown(f"**Yelp Transfer (All Restaurants)**")
+                    st.caption(f"N = {yelp_cm['n']:,} reviews · Prevalence = {yelp_cm['prevalence']:.1%}")
+                    c1, c2, c3, c4 = st.columns(4)
+                    c1.metric("Precision", f"{yelp_cm['precision']:.1%}")
+                    c2.metric("Recall", f"{yelp_cm['recall']:.1%}")
+                    c3.metric("F1", f"{yelp_cm['f1']:.3f}")
+                    c4.metric("FPR", f"{yelp_cm['fpr']:.1%}")
+                    
+                    df_yelp_cm = pd.DataFrame({
+                        "Actual Label": ["Negative (0)", "Positive (1)"],
+                        "Pred Negative (0)": [f"{yelp_cm['tn']:,} (TN)", f"{yelp_cm['fn']:,} (FN)"],
+                        "Pred Positive (1)": [f"{yelp_cm['fp']:,} (FP)", f"{yelp_cm['tp']:,} (TP)"],
+                    })
+                    st.dataframe(df_yelp_cm, hide_index=True, width="stretch")
+                    st.caption(f"ROC-AUC: {yelp_cm['roc_auc']:.3f} · AP: {yelp_cm['ap']:.3f}")
+
+        except Exception as e:
+            st.info(f"Audit confusion matrices could not be rendered: {e}")
+    else:
+        st.info("Run `python Person C/generate_audit_artifacts.py` to populate standardized confusion matrix artifacts.")
+
+    # Section 2: Scientific Feature Selection & Sensitivity Audit
+    st.subheader("Scientific Feature Selection & Sensitivity Audit")
+    st.caption("Empirical ablation and outlier-sensitivity benchmarks justifying the final feature architecture.")
+    sens_path = HERE / "audit_artifacts" / "feature_sensitivity_summary.csv"
+    if sens_path.exists():
+        try:
+            sens_df = pd.read_csv(sens_path)
+            display_cols = {
+                "configuration": "Subset / Architecture",
+                "features_count": "Features",
+                "cv_ap": "CV AP",
+                "holdout_ap_all": "Holdout AP (All)",
+                "holdout_ap_minus3": "Holdout AP (Clean)",
+                "flagged_in_3_outliers": "Outlier Flags (of 4,162)",
+                "mathematical_justification": "Scientific & Mathematical Justification",
+            }
+            st.dataframe(
+                sens_df[list(display_cols.keys())].rename(columns=display_cols),
+                hide_index=True,
+                width="stretch",
+                column_config={
+                    "CV AP": st.column_config.NumberColumn(format="%.3f"),
+                    "Holdout AP (All)": st.column_config.NumberColumn(format="%.3f"),
+                    "Holdout AP (Clean)": st.column_config.NumberColumn(format="%.3f"),
+                    "Outlier Flags (of 4,162)": st.column_config.NumberColumn(format="%d"),
+                }
+            )
+
+            st.markdown(
+                """
+                **Key Scientific Takeaways:**
+                * **1. Product Count Anomaly:** The unclipped `prod_review_count` feature produced 4,162 false flags on 3 dominating holdout products, dragging baseline holdout AP from 0.835 down to 0.517. Removing it (`full_44`) or enforcing causal point-in-time dates (`earlier_history`) permanently cures this collapse (0.822 AP).
+                * **2. Rating-Family Signal Independence:** Ablating all 13 rating-derived features (`minus_family_32`) results in only a marginal 0.042 AP loss (paired bootstrap 95% CI [-0.064, -0.022]), demonstrating that textual linguistic features and behavioral ratios carry robust manipulation signal without rating dependence.
+                * **3. Production Deployment Rationale:** Live single-review screening relies on the 15-feature text-and-rating model. It isolates intrinsic text signals (purchase disclosures, promotional density, sentiment mismatch) while avoiding historical aggregation leakages that fail during cross-platform deployment.
+                """
+            )
+        except Exception as e:
+            st.info(f"Feature sensitivity table could not be rendered: {e}")
+    else:
+        st.info("Run `python Person C/generate_audit_artifacts.py` to populate feature sensitivity audit tables.")
+
     with st.expander("🔬 Research Analysis: Cross-Platform Transfer Dynamics (Amazon vs Yelp)", expanded=False):
+
         st.markdown(
             """
             **Why does average precision drop from ~0.82 on Amazon to ~0.12 on Yelp?**

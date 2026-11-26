@@ -1,0 +1,86 @@
+[
+  {
+    "configuration": "Full Baseline (Week 1 GPU)",
+    "model_id": "full_45",
+    "features_count": 45,
+    "feature_scope": "All text, rating, reviewer & unclipped product aggregates",
+    "cv_ap": 0.906,
+    "holdout_ap_all": 0.548,
+    "holdout_ap_minus3": 0.837,
+    "flagged_in_3_outliers": 4162,
+    "ap_drop_3_outliers": 0.289,
+    "mathematical_justification": "Severely vulnerable to product-count leakage: unclipped aggregate count flags all 4,162 reviews in top 3 products (only 492 true positives), collapsing AP by 0.289."
+  },
+  {
+    "configuration": "Without Tier 1 Ratings",
+    "model_id": "minus_tier1_38",
+    "features_count": 38,
+    "feature_scope": "Excludes review's own star rating & direct rating deviations (RD_raw, ERD, PR, NR)",
+    "cv_ap": 0.871,
+    "holdout_ap_all": 0.485,
+    "holdout_ap_minus3": 0.799,
+    "flagged_in_3_outliers": 4162,
+    "ap_drop_3_outliers": 0.314,
+    "mathematical_justification": "Removing direct rating features reduces holdout AP by 0.038 on non-outlier products while retaining strong 0.871 CV AP, proving text & reviewer history hold substantial signal."
+  },
+  {
+    "configuration": "No Rating Family (Canonical 32)",
+    "model_id": "minus_family_32",
+    "features_count": 32,
+    "feature_scope": "Excludes all Tier 1 and Tier 2 rating-derived features (bursts, concentration)",
+    "cv_ap": 0.86,
+    "holdout_ap_all": 0.475,
+    "holdout_ap_minus3": 0.785,
+    "flagged_in_3_outliers": 4162,
+    "ap_drop_3_outliers": 0.31,
+    "mathematical_justification": "Removing all 13 rating-derived features incurs only a -0.042 paired product-bootstrap loss on clean products (95% CI [-0.064, -0.022]), confirming model robustness without rating dependence."
+  },
+  {
+    "configuration": "44 Features (No Product Count)",
+    "model_id": "full_44_no_prod_review_count",
+    "features_count": 44,
+    "feature_scope": "Full feature set strictly omitting unclipped prod_review_count",
+    "cv_ap": 0.898,
+    "holdout_ap_all": 0.819,
+    "holdout_ap_minus3": 0.837,
+    "flagged_in_3_outliers": 230,
+    "ap_drop_3_outliers": 0.018,
+    "mathematical_justification": "Removing unclipped prod_review_count drops false alarms on outlier products from 4,162 to 230, immediately lifting all-product holdout AP from 0.548 to 0.819 (+0.271 AP gain)."
+  },
+  {
+    "configuration": "31 Features (Universal Text & Reviewer)",
+    "model_id": "no_family_31_no_prod_review_count",
+    "features_count": 31,
+    "feature_scope": "No rating family and no product count aggregate",
+    "cv_ap": 0.852,
+    "holdout_ap_all": 0.761,
+    "holdout_ap_minus3": 0.786,
+    "flagged_in_3_outliers": 218,
+    "ap_drop_3_outliers": 0.025,
+    "mathematical_justification": "Provides the most resilient domain-portable feature subset: immune to both rating bias and product volume distortions while retaining 0.761 AP on all held-out products."
+  },
+  {
+    "configuration": "Earlier Product History (Prospective)",
+    "model_id": "earlier_history",
+    "features_count": 45,
+    "feature_scope": "Strict temporal causal history computed only from strictly prior calendar dates",
+    "cv_ap": 0.914,
+    "holdout_ap_all": 0.822,
+    "holdout_ap_minus3": 0.841,
+    "flagged_in_3_outliers": 203,
+    "ap_drop_3_outliers": 0.019,
+    "mathematical_justification": "Best-performing model overall: enforcing strict point-in-time causal history naturally resolves the 3-product outlier failure, achieving 0.822 AP on all 673 held-out products."
+  },
+  {
+    "configuration": "Rating-Only Reference",
+    "model_id": "rating_only_table",
+    "features_count": 1,
+    "feature_scope": "Empirical training fold positive rate mapped directly to star ratings (1 to 5)",
+    "cv_ap": 0.715,
+    "holdout_ap_all": 0.629,
+    "holdout_ap_minus3": 0.658,
+    "flagged_in_3_outliers": 0,
+    "ap_drop_3_outliers": 0.029,
+    "mathematical_justification": "Establishes the minimal baseline: demonstrates that star rating alone holds signal on Amazon (0.629 AP), but fails completely on new reviewers (AP drops to 0.279)."
+  }
+]
