@@ -1,0 +1,10 @@
+check,passed,kind
+feature list has 45 unique names,True,must pass
+development rows match model.json fit+validation,True,must pass
+holdout rows match model.json,True,must pass
+each development user sits in exactly one fold,True,must pass
+development and holdout products are disjoint,True,must pass
+labels are 0/1,True,must pass
+reviewer groups verified across both platforms,True,must pass
+all predictors present in both feature tables,True,must pass
+development and holdout reviewers are disjoint,False,information

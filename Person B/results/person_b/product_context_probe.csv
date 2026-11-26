@@ -1,0 +1,11 @@
+feature_set,n_features,holdout_ap,flagged_of_4162_in_3_big_products,ap_without_3_products
+family_13 (reference),13,0.8004082683184403,256,0.8148318548374259
+full_45 (reference),45,0.516785563096295,4162,0.8347209916541344
+family_13 + prod_review_count,14,0.48042532795783366,4162,0.8040731930109489
+full_45 minus prod_review_count,44,0.8187321205310373,230,0.8373779527094889
+family_13 + time_since_product_first_review,14,0.8076657371771264,407,0.8249838242688823
+full_45 minus time_since_product_first_review,44,0.5079303850717852,4162,0.8209158343432502
+family_13 + max_text_similarity_same_product,14,0.7994896698335988,161,0.8141274472184752
+full_45 minus max_text_similarity_same_product,44,0.5186452072610214,4162,0.8379046198570033
+family_13 + shingle_jaccard_max_same_product,14,0.8002331553187338,245,0.8149855185998964
+full_45 minus shingle_jaccard_max_same_product,44,0.5243864175400896,4162,0.8351502771257729

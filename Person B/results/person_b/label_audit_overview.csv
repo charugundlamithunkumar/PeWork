@@ -1,0 +1,4 @@
+group,rows,fake_rate
+all rows,381734,0.19072967039875935
+eligible rows (used for training and evaluation),306526,0.2375198188734398
+ineligible rows (excluded; legacy label shown),75208,2.6592915647271565e-05

@@ -1,0 +1,4 @@
+holdout,reviews,fake_rate,AP Week1 45-feat,AP rating-only,AP follow-up
+all 673 products,74192,0.202,0.548,0.629,0.822
+minus 3 products,70030,0.207,0.837,0.658,0.841
+minus 5 products,69141,0.207,0.843,0.664,0.846

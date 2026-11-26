@@ -1,0 +1,46 @@
+feature,rating_family,needs,amazon_na,yelp_na,yelp_nunique,ks_amazon_vs_yelp,yelp_status
+rating,True,text/rating only,0.0,0.0,5,0.297,ok
+MNR,False,"user_id,date",0.0,0.0,22,0.393,ok
+RD_raw,True,prod_id,0.0,0.0,4173,0.369,ok
+ERD,True,prod_id,0.0,0.0,1,0.0,CONSTANT
+EXT,True,text/rating only,0.0,0.0,2,0.004,ok
+PR,True,user_id,0.0,0.0,466,0.448,ok
+NR,True,user_id,0.0,0.0,289,0.328,ok
+total_reviews,False,user_id,0.0,0.0,108,0.509,SHIFTED (KS>0.5)
+BST,False,"user_id,date",0.0,0.0,2,0.148,ok
+prod_review_count,False,prod_id,0.0,0.0,538,0.274,ok
+burst_ratio,True,"prod_id,date",0.0,0.0,11,0.364,ok
+is_burst_day,True,date,0.0,0.0,2,0.019,ok
+pos_burst_ratio,True,"prod_id,date",0.0,0.0,20,0.273,ok
+is_pos_burst_day,True,date,0.0,0.0,2,0.023,ok
+vader_compound,False,text/rating only,0.0,0.0,16191,0.501,SHIFTED (KS>0.5)
+sentiment_mismatch,True,text/rating only,0.0,0.0,20277,0.196,ok
+char_count,False,text/rating only,0.0,0.0,4402,0.427,ok
+word_count,False,text/rating only,0.0,0.0,958,0.41,ok
+avg_word_len,False,text/rating only,0.0,0.0,39788,0.185,ok
+uppercase_ratio,False,text/rating only,0.0,0.0,45171,0.091,ok
+exclamation_density,False,text/rating only,0.0,0.0,15368,0.288,ok
+reviews_per_day_rate,False,"user_id,date",0.0,0.0,9724,0.447,ok
+max_text_similarity_same_product,False,prod_id,0.0,0.0,293120,0.12,ok
+promo_phrase_count,False,text/rating only,0.0,0.0,9,0.012,ok
+promo_phrase_density,False,text/rating only,0.0,0.0,1148,0.013,ok
+first_person_ratio,False,text/rating only,0.0,0.0,9357,0.174,ok
+lexical_diversity,False,text/rating only,0.0,0.0,15980,0.314,ok
+digit_count,False,text/rating only,0.0,0.0,89,0.171,ok
+specificity_proxy,False,text/rating only,0.0,0.0,20052,0.182,ok
+elongation_count,False,text/rating only,0.0,0.0,46,0.196,ok
+slang_count,False,text/rating only,0.0,0.0,16,0.016,ok
+style_dist_to_own_centroid,False,user_id,0.0,0.0,226294,0.516,SHIFTED (KS>0.5)
+user_style_self_consistency,False,user_id,0.0,0.0,54070,0.65,SHIFTED (KS>0.5)
+co_reviewer_count,False,user_id,0.0,0.0,45,0.062,ok
+max_product_overlap_jaccard,False,user_id,0.0,0.0,179,0.057,ok
+reviewer_clustering_coeff,False,user_id,0.0,0.0,204,0.049,ok
+time_since_product_first_review,False,date,0.0,0.0,3720,0.384,ok
+day_of_week_entropy,False,"user_id,date",0.0,0.0,2064,0.452,ok
+posting_gap_fano_factor,False,"user_id,date",0.0,0.0,23198,0.466,ok
+shingle_jaccard_max_same_product,False,prod_id,0.0,0.0,2846,0.063,ok
+readability_score,False,text/rating only,0.001,0.0,101410,0.183,ok
+purchase_declaration_count,False,text/rating only,0.0,0.0,4,0.031,ok
+title_body_sentiment_mismatch,False,review_title,0.0,1.0,0,,MISSING (all NaN)
+negative_review_concentration,True,user_id,0.592,0.668,1,0.0,CONSTANT
+burst_text_similarity_to_peers,True,prod_id,0.0,0.0,725,0.017,ok

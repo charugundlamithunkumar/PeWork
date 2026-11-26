@@ -1,0 +1,5 @@
+,value
+frozen_gpu_ap,0.5477359610029932
+cpu_refit_ap,0.516785563096295
+frozen_gpu_auc,0.8493155411657005
+cpu_refit_auc,0.8451344896945554

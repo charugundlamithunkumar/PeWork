@@ -1,0 +1,42 @@
+{
+  "tier1": {
+    "rating": "the star rating itself",
+    "EXT": "1 if rating is 1 or 5",
+    "sentiment_mismatch": "|(rating - 3) / 2 - VADER compound|",
+    "RD_raw": "|rating - product mean rating|, the mean includes this review",
+    "ERD": "1 if RD_raw >= 4",
+    "PR": "share of the user's reviews rated 4-5, over ALL their reviews including this one",
+    "NR": "share of the user's reviews rated 1-2, over ALL their reviews including this one"
+  },
+  "tier2": {
+    "burst_ratio": "product-day count of 1-2 star reviews over the product's median daily count",
+    "is_burst_day": "1 if burst_ratio >= 3",
+    "pos_burst_ratio": "product-day count of 4-5 star reviews over the product's median daily count",
+    "is_pos_burst_day": "1 if pos_burst_ratio >= 3",
+    "negative_review_concentration": "distinct products / count over the user's 1-2 star reviews",
+    "burst_text_similarity_to_peers": "text similarity, computed only on negative-burst days (is_burst_day == 1)"
+  },
+  "not_in_family_but_related": {
+    "vader_compound": "text sentiment; correlates with stars but is computed from the text only",
+    "total_reviews": "count of the user's reviews, no ratings involved",
+    "prod_review_count": "count of the product's reviews, no ratings involved",
+    "time_since_product_first_review": "dates only; can proxy for a campaign window",
+    "MNR": "max reviews per day by the user, no ratings involved",
+    "BST": "review within 3 days of the user's previous one, no ratings involved"
+  },
+  "family": [
+    "rating",
+    "EXT",
+    "sentiment_mismatch",
+    "RD_raw",
+    "ERD",
+    "PR",
+    "NR",
+    "burst_ratio",
+    "is_burst_day",
+    "pos_burst_ratio",
+    "is_pos_burst_day",
+    "negative_review_concentration",
+    "burst_text_similarity_to_peers"
+  ]
+}

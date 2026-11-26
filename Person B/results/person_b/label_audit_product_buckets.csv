@@ -1,0 +1,5 @@
+product fake-rate bucket,products,reviews
+no fakes,1130,38255
+1-25% fake,986,166275
+26-75% fake,697,65483
+>75% fake,551,36513

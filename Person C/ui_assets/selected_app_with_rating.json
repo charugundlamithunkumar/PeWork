@@ -1,0 +1,56 @@
+{
+  "extractor": "text-rating-v1",
+  "fixture": false,
+  "seed": 42,
+  "label": "Amazon five-star reviewer/product rule or platform removal",
+  "inputs": {
+    "amazon_data.csv": "b8f332513a5573b54a545b3fce4a32f79eba8bac321799de46cde91b6f7d3b11",
+    "metadata": "772df667e98341cb37271f6016f653aadad0309efebf510ebcb677854e32d6c7",
+    "reviewContent": "dca37a1aa2d8bc1198e1937684d6c298228a2940023431fe54a2a5e67b96c89b"
+  },
+  "split_hash": "688698f9cda8fa505198ab06d98ed6a1b205e0ab4dadb85cf7f078e29553492a",
+  "python": "3.14.5 (tags/v3.14.5:5607950, May 10 2026, 10:43:50) [MSC v.1944 64 bit (AMD64)]",
+  "dependencies": {
+    "pandas": "3.1.1",
+    "numpy": "2.5.5",
+    "scikit-learn": "1.9.0",
+    "xgboost": "3.4.1",
+    "pyarrow": "26.0.1",
+    "vaderSentiment": "3.3.2"
+  },
+  "source_hashes": {
+    "__init__.py": "0e02cb644a0d47b2cbf821ba309edc31b5465a02f86c5d750fc4701502692600",
+    "data.py": "138bb8ac431094fada0d3775cc35c74efd6e317a2d742908e71066d1b0e54def",
+    "demo.py": "1ffba9736ed05c186a3b0d0bd4274957d8a0f4e6c8f8355e9fb2ccbd2840c434",
+    "evaluate.py": "cf9be0a215d914c6aefa49a099871fcdf9de09f6be324d5f9a007ece52ab2479",
+    "features.py": "c30c3d2c209224c2838b432c2128e54a535a3b61f3b6d9513ee1e7b42454f606",
+    "freeze.py": "be1b476e2ddc169ac683aa5954aceeeb9ed3cccecb760261109ee13d27600799",
+    "io.py": "9e09c9ae1ca3c759a07f03c0dfc656fb51621f199fc6f6e643c8deb7ae28b996",
+    "models.py": "9803b3a4a86c8b059ae6e29bb85d2aea06dbf23e5d6dd5b84d1791539bf24385"
+  },
+  "name": "selected_app_with_rating",
+  "kind": "xgb",
+  "features": [
+    "rating",
+    "char_count",
+    "word_count",
+    "avg_word_len",
+    "lexical_diversity",
+    "EXT",
+    "vader_compound",
+    "readability_score",
+    "sentiment_mismatch",
+    "uppercase_ratio",
+    "specificity_proxy",
+    "first_person_ratio",
+    "digit_count",
+    "elongation_count",
+    "purchase_declaration_count"
+  ],
+  "threshold": 0.36965659260749817,
+  "calibration": {
+    "method": "uncalibrated"
+  },
+  "weights": "selected_app_with_rating.ubj",
+  "weights_sha256": "0f3df7e008f8c0a1150c2e61890030c8e50f66294037efc22e97bf38cdd352e2"
+}

@@ -1,0 +1,7 @@
+test_set,n,positives,fake_rate,users,products
+yelp_all,358957,36860,0.1027,160201,923
+yelp_inflation,349833,27736,0.0793,153667,923
+amazon_holdout_all,74192,14966,0.2017,71407,673
+amazon_holdout_new_reviewers,62094,6346,0.1022,61226,659
+amazon_holdout_minus3,70030,14474,0.2067,67394,670
+amazon_holdout_minus3_new,58307,5938,0.1018,57528,656

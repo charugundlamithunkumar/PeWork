@@ -1,0 +1,15 @@
+rule,recorded_removal,combined,rows,scope,share_of_scope
+False,False,False,233736,raw,0.6123007120141251
+False,unknown,unknown,75190,raw,0.19696961758711565
+True,False,True,22878,raw,0.059931784960207894
+False,True,True,20599,raw,0.05396165916580656
+True,True,True,18346,raw,0.04805964362618997
+True,unknown,True,10985,raw,0.02877658264655493
+False,False,False,233720,eligible,0.7624801811265602
+True,False,True,22878,eligible,0.07463640930948762
+False,True,True,20597,eligible,0.0671949524673274
+True,True,True,18346,eligible,0.059851366605116696
+True,unknown,True,10985,eligible,0.03583709049150806
+False,unknown,unknown,75190,ineligible,0.9997606637591746
+False,False,False,16,ineligible,0.00021274332517817252
+False,True,True,2,ineligible,2.6592915647271565e-05

@@ -1,0 +1,5 @@
+model,brier
+week1_45_features,0.1116083562374115
+history_tree_follow_up,0.07020585983991623
+rating_only,0.08795312025140901
+constant_holdout_prevalence,0.16102895926260766

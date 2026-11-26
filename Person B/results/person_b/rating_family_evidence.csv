@@ -1,0 +1,8 @@
+fact,value,n
+share of eligible reviews written by reviewers with exactly one review in the data,0.7686036421054006,235597
+"among those, PR equals 1 exactly when the rating is 4 or 5",1.0,235597
+"among those, NR equals 1 exactly when the rating is 1 or 2",1.0,235597
+fake rate for reviewers with 1-1 reviews,0.0966438452102531,235597
+fake rate for reviewers with 2-3 reviews,0.6182897384305835,49700
+fake rate for reviewers with 4-10 reviews,0.8951617762246189,16597
+fake rate for reviewers with 11-more reviews,0.9609240069084629,4632

@@ -1,0 +1,8 @@
+streamlit>=1.67,<2
+altair>=6,<7
+pandas>=2.2,<4
+numpy>=1.26,<3
+scikit-learn>=1.5,<2
+xgboost>=3.4,<4
+pyarrow>=17,<27
+vaderSentiment==3.3.2

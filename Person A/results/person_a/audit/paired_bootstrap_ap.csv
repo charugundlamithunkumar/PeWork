@@ -1,0 +1,7 @@
+cohort,comparison,metric,delta,lower_95,upper_95,draws
+all holdout,history_tree_follow_up minus week1_45_features,average_precision,0.27403371455768777,0.003224040394866199,0.4119679681456194,400
+all holdout,history_tree_follow_up minus rating_only,average_precision,0.19279520029040065,0.1647767433661346,0.22443539194205192,400
+all holdout,rating_only minus week1_45_features,average_precision,0.08123851426728712,-0.18187117235271824,0.2027481375611683,400
+holdout users NOT in development,history_tree_follow_up minus week1_45_features,average_precision,0.2587362716532742,0.030324601243871905,0.3508257307357415,400
+holdout users NOT in development,history_tree_follow_up minus rating_only,average_precision,0.20928821759866595,0.17636205078209183,0.24022105048325623,400
+holdout users NOT in development,rating_only minus week1_45_features,average_precision,0.049448054054608226,-0.18239980929448935,0.1193867802331628,400

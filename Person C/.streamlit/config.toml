@@ -1,0 +1,17 @@
+[theme]
+base = "light"
+primaryColor = "#18644C"
+backgroundColor = "#F7F8F4"
+secondaryBackgroundColor = "#E8EEE8"
+textColor = "#172721"
+borderColor = "#CAD8D0"
+baseRadius = "0.75rem"
+showWidgetBorder = true
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+headingFont = "'Instrument Sans':https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600;700&display=swap"
+
+[browser]
+gatherUsageStats = false
+
+[server]
+maxUploadSize = 5
